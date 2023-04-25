@@ -12,7 +12,7 @@
         const kiwilistDay = ["http://kiwi4.com:8073/",
             "http://kiwi5.com:8073/",
         ];
-        const kiwilistNight = ["http://kiwi0.com:8073/", ,
+        const kiwilistNight = ["http://kiwi0.com:8073/",
             "http://kiwi1.com:8073/",
             "http://kiwi2.com:8073/",
         ];
@@ -63,7 +63,7 @@
             tune(url);
         }
 
-        reload(); // we call it ourselves the first time since setInterval waits for interval before first run
+        setTimeout(reload, 1000); // we have to wait a sec until the HTML below this script has loaded
         setInterval(reload, 5 * 60000);
     </script>
     <iframe src="" id="kiwiframe"
