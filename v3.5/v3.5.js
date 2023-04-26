@@ -139,7 +139,7 @@ async function getBestKiwi(config, kiwimap, plannedUseMins) {
 function initAutoreloadMap(kiwis) {
     let kiwimap = new Map();
     for (const kiwi of kiwis) {
-        kiwimap.set(kiwi.url, { timelimit: kiwi.timelimit, timeout: kiwi.timeout, info: null, score: Number.MIN_SAFE_INTEGER, lastused: Date.now() / 60000, usetimes: [{ t: (Date.now() / 60000) - ((24 * 60)), len: 5 }, { t: (Date.now() / 60000) - ((24 * 60)), len: 1 }], leftoverusetime: null });
+        kiwimap.set(kiwi.url, { timelimit: kiwi.timelimit, timeout: kiwi.timeout, info: null, score: Number.MIN_SAFE_INTEGER, lastused: Date.now() / 60000, usetimes: [], leftoverusetime: null });
     }
     return kiwimap;
 }
