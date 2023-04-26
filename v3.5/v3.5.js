@@ -66,14 +66,53 @@ async function rateKiwis(config, kiwimap) {
         }
         kiwiobj.info = info;
         kiwiobj.score = score;
-        kiwimap.set(kiwi, kiwiobj);
     }));
 }
 
-async function getBestKiwi(config, kiwimap) {
+async function updateTimeLimits(config, kiwimap) {
+    await Promise.all(Array.from(kiwimap, ([key]) => (key)).map(async kiwi => {
+        console.log("->");
+        let kiwiobj = kiwimap.get(kiwi);
+        if (kiwiobj.timelimit == null) {
+            return;
+        }
+        const unixmins = Date.now() / 60000;
+
+        kiwiobj.usetimes = kiwiobj.usetimes.filter((item) => { return (item.t + item.len) >= (unixmins - (24 * 60)); });
+        let totalusemins = 0;
+        for (const o of kiwiobj.usetimes) {
+            totalusemins += o.len;
+        }
+
+        if ((totalusemins + config.usageDisallowTolerance) >= kiwiobj.timelimit) {
+            kiwiobj.score = Number.MIN_SAFE_INTEGER;
+            kiwiobj.leftoverusetime = null;
+        } else {
+            kiwiobj.leftoverusetime = kiwiobj.timelimit - totalusemins;
+        }
+    }));
+}
+
+async function getBestKiwi(config, kiwimap, plannedUseMins) {
+    if (kiwimap.size == 0) {
+        throw new Error("no receivers in list");
+    }
+
     await rateKiwis(config, kiwimap);
+
     let kiwiarr = Array.from(kiwimap, ([key, value]) => ({ key, value }));
     kiwiarr = kiwiarr.filter((item) => { return item.value.score != Number.MIN_SAFE_INTEGER; });
+    if (kiwiarr.length == 0) {
+        throw new Error("all receivers unusable");
+    }
+
+    await updateTimeLimits(config, kiwimap);
+    kiwiarr = Array.from(kiwimap, ([key, value]) => ({ key, value }));
+    kiwiarr = kiwiarr.filter((item) => { return item.value.score != Number.MIN_SAFE_INTEGER; });
+    if (kiwiarr.length == 0) {
+        throw new Error("all receiver time limits exceeded");
+    }
+
     kiwiarr.sort((a, b) => {
         if (a.value.score < b.value.score) {
             return 1;
@@ -83,22 +122,24 @@ async function getBestKiwi(config, kiwimap) {
         return 0; // equal
     });
 
-    if (kiwiarr.length == 0) {
-        return null;
-    }
-
-    console.log("kiwi ranking:");
+    console.log("receiver ranking:");
     for (const k of kiwiarr) {
         console.log(`    -> ${k.value.score} ${k.key}`);
     }
 
-    return kiwiarr[0].key;
+    const tltime = ((kiwiarr[0].value.timelimit != null) && (kiwiarr[0].value.leftoverusetime < plannedUseMins)) ? kiwiarr[0].value.leftoverusetime : plannedUseMins;
+    const totime = ((kiwiarr[0].value.timeout != null) && (kiwiarr[0].value.timeout < plannedUseMins)) ? kiwiarr[0].value.timeout : plannedUseMins;
+
+    const url = kiwiarr[0].key;
+    const time = tltime < totime ? tltime : totime;
+
+    return { url, time };
 }
 
-function initAutoreloadMap(urls) {
+function initAutoreloadMap(kiwis) {
     let kiwimap = new Map();
-    for (const url of urls) {
-        kiwimap.set(url, { info: null, score: Number.MIN_SAFE_INTEGER, lastused: Date.now() / 60000 });
+    for (const kiwi of kiwis) {
+        kiwimap.set(kiwi.url, { timelimit: kiwi.timelimit, timeout: kiwi.timeout, info: null, score: Number.MIN_SAFE_INTEGER, lastused: Date.now() / 60000, usetimes: [{ t: (Date.now() / 60000) - ((24 * 60)), len: 5 }, { t: (Date.now() / 60000) - ((24 * 60)), len: 1 }], leftoverusetime: null });
     }
     return kiwimap;
 }
