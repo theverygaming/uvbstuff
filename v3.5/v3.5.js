@@ -1,31 +1,15 @@
+// https://dmitripavlutin.com/timeout-fetch-request/
+async function getRequestAsync(url, timeout) {
+    const controller = new AbortController();
+    const to = setTimeout(() => controller.abort(), timeout);
 
-// https://stackoverflow.com/a/48969580
-function getRequestAsync(url, timeout) {
-    return new Promise(function (resolve, reject) {
-        let req = new XMLHttpRequest();
-        req.open("GET", url);
-        req.timeout = timeout;
-        req.onload = () => {
-            if (req.status >= 200 && req.status < 300) {
-                resolve(req.response);
-            } else {
-                reject({
-                    status: req.status,
-                });
-            }
-        };
-        req.onerror = () => {
-            reject({
-                status: 0,
-            });
-        };
-        req.ontimeout = () => {
-            reject({
-                status: 0,
-            });
-        };
-        req.send();
-    });
+    const response = await fetch(url, { signal: controller.signal });
+    clearTimeout(to);
+
+    if (response.status >= 200 && response.status < 300) {
+        return response.text();
+    }
+    throw new Error("failed GET request");
 }
 
 // kiwibaseurl format: http://kiwi.com:8073/
@@ -60,7 +44,7 @@ async function rateKiwis(config, kiwimap) {
     await Promise.all(Array.from(kiwimap, ([key]) => (key)).map(async kiwi => {
         let info = await probeKiwi(kiwi, config.timeout);
         let kiwiobj = kiwimap.get(kiwi);
-        let score = Number.MIN_SAFE_INTEGER;
+        let score = -Infinity;
         if (info.alive && info.usage != 1) {
             score = calcScore(config, info.usage, info.snr, kiwiobj.lastused);
         }
@@ -71,7 +55,6 @@ async function rateKiwis(config, kiwimap) {
 
 async function updateTimeLimits(config, kiwimap) {
     await Promise.all(Array.from(kiwimap, ([key]) => (key)).map(async kiwi => {
-        console.log("->");
         let kiwiobj = kiwimap.get(kiwi);
         if (kiwiobj.timelimit == null) {
             return;
@@ -85,7 +68,7 @@ async function updateTimeLimits(config, kiwimap) {
         }
 
         if ((totalusemins + config.usageDisallowTolerance) >= kiwiobj.timelimit) {
-            kiwiobj.score = Number.MIN_SAFE_INTEGER;
+            kiwiobj.score = -Infinity;
             kiwiobj.leftoverusetime = null;
         } else {
             kiwiobj.leftoverusetime = kiwiobj.timelimit - totalusemins;
@@ -101,14 +84,14 @@ async function getBestKiwi(config, kiwimap, plannedUseMins) {
     await rateKiwis(config, kiwimap);
 
     let kiwiarr = Array.from(kiwimap, ([key, value]) => ({ key, value }));
-    kiwiarr = kiwiarr.filter((item) => { return item.value.score != Number.MIN_SAFE_INTEGER; });
+    kiwiarr = kiwiarr.filter((item) => { return item.value.score != -Infinity; });
     if (kiwiarr.length == 0) {
         throw new Error("all receivers unusable");
     }
 
     await updateTimeLimits(config, kiwimap);
     kiwiarr = Array.from(kiwimap, ([key, value]) => ({ key, value }));
-    kiwiarr = kiwiarr.filter((item) => { return item.value.score != Number.MIN_SAFE_INTEGER; });
+    kiwiarr = kiwiarr.filter((item) => { return item.value.score != -Infinity; });
     if (kiwiarr.length == 0) {
         throw new Error("all receiver time limits exceeded");
     }
@@ -139,7 +122,7 @@ async function getBestKiwi(config, kiwimap, plannedUseMins) {
 function initAutoreloadMap(kiwis) {
     let kiwimap = new Map();
     for (const kiwi of kiwis) {
-        kiwimap.set(kiwi.url, { timelimit: kiwi.timelimit, timeout: kiwi.timeout, info: null, score: Number.MIN_SAFE_INTEGER, lastused: Date.now() / 60000, usetimes: [], leftoverusetime: null });
+        kiwimap.set(kiwi.url, { timelimit: kiwi.timelimit, timeout: kiwi.timeout, info: null, score: -Infinity, lastused: Date.now() / 60000, usetimes: [], leftoverusetime: null });
     }
     return kiwimap;
 }
