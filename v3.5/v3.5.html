@@ -44,7 +44,6 @@
             bottom: 50%;
             width: 100%;
         }
-
     </style>
     <script>
         function tune(url) {
@@ -90,6 +89,19 @@
                 console.log(`Error: ${e.message}`);
                 document.getElementById("status").style.color = "red";
                 document.getElementById("status").textContent = `Error: ${e.message}`;
+
+                if (fallback) {
+                    try {
+                        const r = await probeKiwi(fallbackUrl, config.timeout);
+                        if (r.usage < 1) {
+                            tune(fallbackUrl);
+                            setTimeout(reload, fallbackReloadMinutes * 60000);
+                            return;
+                        }
+
+                    } catch (e) {}
+                }
+
                 setTimeout(reload, retryMinutes * 60000);
             }
         }

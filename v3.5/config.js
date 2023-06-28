@@ -33,3 +33,8 @@ const config = {
     scoreTimeMult: 1, // time score multiplier (time is minutes passed since SDR last used)
     usageDisallowTolerance: 2, // kiwi cannot be used when there is less than x minutes left (value in minutes)
 };
+
+// on error a fallback kiwi may be used. This kiwi must have no time limits at all
+const fallback = false;
+const fallbackUrl = "http://192.168.2.183:8073/";
+const fallbackReloadMinutes = 30;
