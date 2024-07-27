@@ -1,3 +1,4 @@
+// If you use this please specify multiple kiwis so you don't just camp on a single one!
 // URL format: http://kiwi.com:8073/ - timeout - 24h usage limit (time limits in minutes, null means no limit)
 const kiwilistDay = [
     { url: "http://kiwi4.com:8073/", timeout: null, timelimit: 60 }, // no timeout but 60 minute 24h limit
