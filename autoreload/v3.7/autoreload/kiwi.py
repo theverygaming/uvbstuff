@@ -32,6 +32,7 @@ class Kiwi(sillyorm.model.Model):
             record.state_last_update = datetime.datetime.now(datetime.UTC).replace(tzinfo=None)
             record.state_alive = False
             try:
+                # TODO: try and use multiple threads for this, as this takes forever with a large list to go through
                 resp = requests.get(f"{record.url}/status", timeout=2)
                 resp.raise_for_status()
                 match = re.findall(r"(.*)=(.*)", resp.text)
