@@ -73,7 +73,7 @@
                             document.getElementById("status").textContent = "getting new instructions...";
                             try {
                                 const controller = new AbortController();
-                                setTimeout(() =&gt; controller.abort(), 5000);
+                                setTimeout(() =&gt; controller.abort(), 30000);
                                 const response = await fetch("/kiwi/instruction", {
                                     method: "post",
                                     headers: {
