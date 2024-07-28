@@ -69,7 +69,7 @@
                         }
 
                         async function reload() {
-                            document.getElementById("status").style.color = "green";
+                            document.getElementById("status").style.color = "yellow";
                             document.getElementById("status").textContent = "getting new instructions...";
                             try {
                                 const controller = new AbortController();
@@ -101,6 +101,7 @@
                                 console.log(`Error: ${e.message}`);
                                 document.getElementById("status").style.color = "red";
                                 document.getElementById("status").textContent = `Error!`;
+                                frameLoad(null);
                             }
                             setTimeout(reload, 20000);
                         }
@@ -123,7 +124,8 @@
                         <h1 style="color: red; font-weight: bolder;">Autoreload V3.7</h1>
                         <p style="color: red; font-size: 1.17em; font-weight: bolder;" id="status">...</p>
                         <p style="color: grey;">
-                            Written by @TheSWLChannel
+                            Written by @TheSWLChannel<br/>
+                            Autoreload V3.7 is still rather experimental :3c
                         </p>
                     </div>
                 </div>

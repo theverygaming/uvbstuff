@@ -11,17 +11,22 @@
     </template>
 
     <template name="admin_main">
+        <h1>Status</h1>
+        <p>active URL: <a t-raw="status['url']" t-att-href="status['url']"></a></p>
+        <hr width="100%"/>
         <h1>Kiwis</h1>
         <table class="table table-striped table-bordered w-auto">
             <thead>
                 <tr>
                     <th></th><!-- edit & delete buttons -->
                     <th>Active</th>
+                    <th>Fallback</th>
                     <th>URL</th>
                     <th>Timeout</th>
                     <th>Timelimit</th>
                     <th>Hours</th>
                     <th>Notes</th>
+                    <th>24h usage (minutes)</th>
                     <th>Last status update</th>
                     <th>Alive</th>
                     <th>Usage (%)</th>
@@ -30,6 +35,18 @@
             </thead>
             <t t-call="admin_kiwi_list"/>
             <a class="btn btn-primary" href="/admin/kiwis/edit/new">Add kiwi</a>
+        </table>
+        <hr width="100%"/>
+        <h1>Timeslot log</h1>
+        <table class="table table-striped table-bordered w-auto">
+            <thead>
+                <tr>
+                    <th>Kiwi URL</th>
+                    <th>start</th>
+                    <th>end</th>
+                </tr>
+            </thead>
+            <t t-call="admin_kiwi_ts_list"/>
         </table>
     </template>
 
@@ -45,15 +62,32 @@
                         <button class="btn btn-danger" t-att-hx-delete="kiwi['edit_url']">Delete</button>
                     </td>
                     <td><input type="checkbox" t-att-checked="kiwi['active']" disabled=""/></td>
+                    <td><input type="checkbox" t-att-checked="kiwi['fallback']" disabled=""/></td>
                     <td><a t-raw="kiwi['url']" t-att-href="kiwi['url']"/></td>
                     <td t-raw="kiwi['timeout']"/>
                     <td t-raw="kiwi['timelimit']"/>
                     <td><t t-raw="kiwi['hour_start']"/>-<t t-raw="kiwi['hour_end']"/></td>
                     <td t-raw="kiwi['notes']"/>
+                    <td t-raw="kiwi['used_mins_24h']"/>
                     <td t-raw="kiwi['state_last_update']"/>
                     <td><input type="checkbox" t-att-checked="kiwi['state_alive']" disabled=""/></td>
                     <td t-raw="kiwi['state_usage']"/>
                     <td t-raw="kiwi['state_snr']"/>
+                </tr>
+            </t>
+        </tbody>
+    </template>
+
+    <template name="admin_kiwi_ts_list">
+        <tbody hx-get="/admin/tslist"
+            hx-trigger="load delay:10s"
+            hx-swap="outerHTML"
+        >
+            <t t-foreach="tslist" t-as="ts">
+                <tr>
+                    <td><a t-raw="ts['url']" t-att-href="ts['url']"/></td>
+                    <td t-raw="ts['start']"/>
+                    <td t-raw="ts['end']"/>
                 </tr>
             </t>
         </tbody>
@@ -69,14 +103,17 @@
                         <label for="active">Active:</label>
                         <input type="checkbox" id="active" name="active" t-att-checked="kiwi['active']"/>
                         <br/>
+                        <label for="fallback">Fallback:</label>
+                        <input type="checkbox" id="fallback" name="fallback" t-att-checked="kiwi['fallback']"/>
+                        <br/>
                         <label for="url">URL:</label>
                         <input type="text" class="form-control" id="url" name="url" placeholder="kiwi URL" t-att-value="kiwi['url']"/>
                         <br/>
                         <label for="timeout">Timeout:</label>
-                        <input type="number" class="form-control" id="timeout" name="timeout" t-att-value="kiwi['timeout']" placeholder="Timeout in seconds"/>
+                        <input type="number" class="form-control" id="timeout" name="timeout" t-att-value="kiwi['timeout']" placeholder="Timeout in minutes"/>
                         <br/>
                         <label for="timelimit">Timelimit:</label>
-                        <input type="number" class="form-control" id="timelimit" name="timelimit" t-att-value="kiwi['timelimit']" placeholder="24h Timelimit in seconds"/>
+                        <input type="number" class="form-control" id="timelimit" name="timelimit" t-att-value="kiwi['timelimit']" placeholder="24h Timelimit in minutes"/>
                         <br/>
                         <label for="hour_start">UTC start hour:</label>
                         <input type="number" class="form-control" id="hour_start" name="hour_start" t-att-value="kiwi['hour_start']" placeholder="Start hour (UTC, inclusive)"/>
