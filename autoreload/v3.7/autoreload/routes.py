@@ -153,7 +153,6 @@ def kiwi_instruction():
                 status["url"] = None
                 status["timeslot"] = None
                 return False
-            # TODO: url, timeslot
             status["url"] = kiwi.get_tune_url(**status["kiwiconf"])
             tnow = datetime.datetime.now(datetime.UTC).replace(tzinfo=None)
             status["timeslot"] = env["kiwi_timeslot"].create({
