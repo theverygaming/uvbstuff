@@ -13,6 +13,7 @@ class Kiwi(sillyorm.model.Model):
     url = sillyorm.fields.String()
     timeout = sillyorm.fields.Integer()  # timeout in minutes (max time spent until you get kicked)
     timelimit = sillyorm.fields.Integer()  # timelimit in minutes (max time spent on the kiwi in 24h)
+    # FIXME: support midnight transitions with hour_start and hour_end
     hour_start = sillyorm.fields.Integer()  # starting UTC hour this kiwi can be used from (inclusive)
     hour_end = sillyorm.fields.Integer()  # ending UTC hour this kiwi can be used until (inclusive)
     notes = sillyorm.fields.Text()
