@@ -6,6 +6,10 @@ views.update({
         "model": "kiwi",
         "fields": [
             {
+                "name": "ID",
+                "field": "id",
+            },
+            {
                 "name": "Active",
                 "field": "active",
             },
@@ -16,10 +20,6 @@ views.update({
             {
                 "name": "URL",
                 "field": "url",
-            },
-            {
-                "name": "Timeout",
-                "field": "timeout",
             },
             {
                 "name": "Timeout",
@@ -41,6 +41,22 @@ views.update({
                 "name": "Notes",
                 "field": "notes",
             },
+            {
+                "name": "State: Last Update",
+                "field": "state_last_update",
+            },
+            {
+                "name": "State: Is Alive?",
+                "field": "state_alive",
+            },
+            {
+                "name": "State: Usage (0-100%)",
+                "field": "state_usage",
+            },
+            {
+                "name": "State: SNR",
+                "field": "state_snr",
+            },
         ],
         "pagination": {
             "default_page_size": 5,
@@ -49,8 +65,52 @@ views.update({
     },
     "kiwi_form": {
         "type": "form",
-        "model": "xmlid",
-        "fields": [],
+        "model": "kiwi",
+        "fields": [
+            {
+                "name": "Active",
+                "field": "active",
+                "type": "bool",
+            },
+            {
+                "name": "Fallback",
+                "field": "fallback",
+                "type": "bool",
+            },
+            {
+                "name": "URL",
+                "field": "url",
+                "type": "str",
+            },
+            {
+                "name": "Timeout",
+                "field": "timeout",
+                "type": "int",
+            },
+            {
+                "name": "Timelimit",
+                "field": "timelimit",
+                "type": "int",
+            },
+            {
+                "name": "Start Hour",
+                "field": "hour_start",
+                "type": "int",
+            },
+            {
+                "name": "End hour",
+                "field": "hour_end",
+                "type": "int",
+            },
+            {
+                "name": "Notes",
+                "field": "notes",
+                "type": "str",
+                "widget": {
+                    "type": "textarea",
+                },
+            },
+        ],
         "actions": [],
     },
 })

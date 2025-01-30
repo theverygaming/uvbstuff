@@ -38,8 +38,8 @@ let
 
     src = fetchgit {
       url = "https://github.com/theverygaming/silly.git";
-      rev = "5d852ced63775656afb4ba878d04021c42149d06";
-      hash = "sha256-t0yZrqDJANsEC7q4if3doQfH8Z1NHFqWin521lsnu68=";
+      rev = "3bac662ed5c7d571e5557e4532aa860a27a45ab4";
+      hash = "sha256-YBBq2E5XqKzvb5Bfh4uVQpr/Xg9IF3OW0pwcYuIbUgI=";
     };
   };
 in
