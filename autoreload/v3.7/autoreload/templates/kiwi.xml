@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
-    <record model="template" xmlid="template_kiwi_index">
+    <record model="template" xmlid="autoreload.template_kiwi_index">
         <field name="xml" t="str">
             <template t-strip-text=" &#10;">
-                <t t-call="template_html_base">
+                <t t-call="html_base.base">
                     <t t-set="title">Autoreload V3.7 - KiwiSDR</t>
                     <t t-set="lang">en</t>
                     <t t-set="head">

@@ -22,7 +22,7 @@ class AutoreloadRouter(http.Router):
     def index(self):
         env_lock.acquire()
         try:
-            return env["template"].render("template_index", {})
+            return env["template"].render("autoreload.template_index", {})
         finally:
             env_lock.release()
 
@@ -30,7 +30,7 @@ class AutoreloadRouter(http.Router):
     def kiwi_index(self):
         env_lock.acquire()
         try:
-            return env["template"].render("template_kiwi_index", {})
+            return env["template"].render("autoreload.template_kiwi_index", {})
         finally:
             env_lock.release()
 

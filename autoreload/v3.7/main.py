@@ -1,9 +1,13 @@
+import logging
 from pathlib import Path
 import silly
 import sillyorm
 
 if __name__ == "__main__":
-    conn = sillyorm.dbms.sqlite.SQLiteConnection("data.db", check_same_thread=False)
+    logging.basicConfig(
+        format="%(asctime)s %(levelname)s %(name)s: %(message)s", level=logging.INFO
+    )
+    conn = sillyorm.dbms.sqlite.SQLiteConnection("db.sqlite3", check_same_thread=False)
     silly.main.init(conn)
 
     silly_mod_path = str(Path(silly.__file__).parent / "modules")
