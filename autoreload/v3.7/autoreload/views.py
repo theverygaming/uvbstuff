@@ -113,4 +113,29 @@ views.update({
         ],
         "actions": [],
     },
+    "kiwi_timeslot_list": {
+        "type": "list",
+        "model": "kiwi_timeslot",
+        "fields": [
+            {
+                "name": "ID",
+                "field": "id",
+            },
+            {
+                "name": "Start Time",
+                "field": "start",
+            },
+            {
+                "name": "End Time",
+                "field": "end",
+            },
+            {
+                "name": "Related KiwiSDR ID",
+                "field": "kiwi",
+            },
+        ],
+        "pagination": {
+            "default_page_size": 5,
+        },
+    },
 })
