@@ -1,7 +1,10 @@
+import logging
 import datetime
 import flask
 from silly.main import env, env_lock
 from silly import http
+
+_logger = logging.getLogger(__name__)
 
 status = {
     "url": None,
@@ -71,7 +74,7 @@ class AutoreloadRouter(http.Router):
                 }
 
             request = flask.request.json
-            print(f"/kiwi/instruction request: {request} - current status: {status}")
+            logger.info("/kiwi/instruction request: %s - current status: %s", request, status)
 
             # Is the client not showing anything or do we not know what the client is doing?
             if request["iframeContent"] == "" or (request["iframeContent"] != status["url"] and status["url"] is None):

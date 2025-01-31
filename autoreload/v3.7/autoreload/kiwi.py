@@ -1,7 +1,10 @@
+import logging
 import re
 import datetime
 import requests
 import sillyorm
+
+_logger = logging.getLogger(__name__)
 
 
 class Kiwi(sillyorm.model.Model):
@@ -27,7 +30,7 @@ class Kiwi(sillyorm.model.Model):
 
     def get_status(self):
         for record in self:
-            print(f"getting kiwi status for '{record.url}'")
+            _logger.info("getting kiwi status for kiwi with URL %s", record.url)
             record.state_last_update = datetime.datetime.now(datetime.UTC).replace(tzinfo=None)
             record.state_alive = False
             try:
@@ -36,7 +39,7 @@ class Kiwi(sillyorm.model.Model):
                 resp.raise_for_status()
                 match = re.findall(r"(.+)=(.+)", resp.text)
                 if match is None:
-                    print("  -> kiwi status in invalid format")
+                    _logger.warning("  -> kiwi status in invalid format")
                     continue
                 vals = {}
                 for (k, v) in match:
@@ -51,7 +54,7 @@ class Kiwi(sillyorm.model.Model):
 
             except (requests.exceptions.RequestException, KeyError, ValueError) as e:
                 record.state_alive = False
-                print(f"  -> Exception caught while getting kiwi status: {repr(e)}")
+                _logger.error("  -> Exception caught while getting kiwi status: %s", repr(e))
 
     def get_tune_url(self, freq, mode, bps, bpe, zoom, colormap, volume):
         self.ensure_one()
@@ -94,6 +97,7 @@ class Kiwi(sillyorm.model.Model):
     def choose_best(self):
         records = self.env["kiwi"].search([("active", "=", True), "|", ("fallback", "=", True)])
         t_utc = datetime.datetime.now(datetime.UTC).replace(tzinfo=None)
+        # TODO: log information on score calculation 
         def rate_kiwis(kiwis, is_fallback=False):
             if not is_fallback:
                 kiwis = list(filter(lambda x: t_utc.hour >= x[0].hour_start and t_utc.hour <= x[0].hour_end, kiwis))
@@ -113,10 +117,8 @@ class Kiwi(sillyorm.model.Model):
         records.get_status()
         records = [k for k in records if k.state_alive and (k.timelimit == 0 or (k.timelimit - k.get_used_24h_mins()) > 5)]
         kiwis = rate_kiwis([[k, 0] for k in records if k.active])
-        print(kiwis)
         if len(kiwis) == 0:
             kiwis = rate_kiwis([[k, 0] for k in records if k.fallback], True)
-            print(kiwis)
             if len(kiwis) == 0:
                 return None
 
