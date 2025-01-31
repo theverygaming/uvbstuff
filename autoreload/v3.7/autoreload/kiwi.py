@@ -73,7 +73,7 @@ class Kiwi(sillyorm.model.Model):
             order_by="end",
             order_asc=False,
         )
-        return times[0] if len(times) != 0 else None
+        return times[0].end if len(times) != 0 else None
 
     def get_used_24h_mins(self):
         self.ensure_one()
