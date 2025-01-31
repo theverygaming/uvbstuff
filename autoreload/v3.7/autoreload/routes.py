@@ -74,7 +74,7 @@ class AutoreloadRouter(http.Router):
                 }
 
             request = flask.request.json
-            logger.info("/kiwi/instruction request: %s - current status: %s", request, status)
+            _logger.info("/kiwi/instruction request: %s - current status: %s", request, status)
 
             # Is the client not showing anything or do we not know what the client is doing?
             if request["iframeContent"] == "" or (request["iframeContent"] != status["url"] and status["url"] is None):
