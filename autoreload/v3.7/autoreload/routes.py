@@ -88,7 +88,7 @@ class AutoreloadRouter(http.Router):
                 return {
                     "message": {
                         "color": "green",
-                        "text": f"time left: {int(mins_left)}min",
+                        "text": f"reload in: {int(mins_left)}min",
                     }
                 }
 
