@@ -17,8 +17,8 @@ let
     */
     src = fetchgit {
       url = "https://github.com/theverygaming/sillyORM.git";
-      rev = "32a5b121ea1e072b871e0f333a92309f7a3e9ec4";
-      hash = "sha256-awCMipb7hxodO+GAO6/jzl63UyM+fvU1BK+c7OtHQiw=";
+      rev = "cfddd5c848f287faee8f0c9d7971034202588d25";
+      hash = "sha256-o9mNc7RQtUkMyCM6HmdnmtXhzV+T7MhCMmGEOODcqiE=";
     };
   };
   sillyPackage = pkgs.python312Packages.buildPythonPackage rec {
@@ -38,8 +38,8 @@ let
 
     src = fetchgit {
       url = "https://github.com/theverygaming/silly.git";
-      rev = "40d314b35209fb12c6dec6bbb35cefcfcdae966e";
-      hash = "sha256-InHDP0RVWNR4dB00ucOWpHMJJ4hvDMa7q88ExB9obSM=";
+      rev = "8fb07dee5afe563817d263d40fdc0b1058635c94";
+      hash = "sha256-oh2wDka06JvzCITC7j+xDcJncOOvysI71daHQGN5uIU=";
     };
   };
 in

@@ -9,15 +9,6 @@ _logger = logging.getLogger(__name__)
 status = {
     "url": None,
     "timeslot": None,
-    "kiwiconf": {
-        "freq": "4625",
-        "mode": "usb",
-        "zoom": "11",
-        "bps": "50",
-        "bpe": "4000",
-        "colormap": "1",
-        "volume": "180",
-    }
 }
 
 class AutoreloadRouter(http.Router):
@@ -47,7 +38,15 @@ class AutoreloadRouter(http.Router):
                     status["url"] = None
                     status["timeslot"] = None
                     return False
-                status["url"] = kiwi.get_tune_url(**status["kiwiconf"])
+                status["url"] = kiwi.get_tune_url(**{
+                    "freq": env["settings_setting"].get_value("autoreload.kiwi_freq", error=True),
+                    "mode": env["settings_setting"].get_value("autoreload.kiwi_mode", error=True),
+                    "zoom": env["settings_setting"].get_value("autoreload.kiwi_zoom", error=True),
+                    "bps": env["settings_setting"].get_value("autoreload.kiwi_band_start", error=True),
+                    "bpe": env["settings_setting"].get_value("autoreload.kiwi_band_end", error=True),
+                    "colormap": env["settings_setting"].get_value("autoreload.kiwi_colormap", error=True),
+                    "volume": env["settings_setting"].get_value("autoreload.kiwi_volume", error=True),
+                })
                 tnow = datetime.datetime.now(datetime.UTC).replace(tzinfo=None)
                 status["timeslot"] = env["kiwi_timeslot"].create({
                     "kiwi": kiwi.id,
