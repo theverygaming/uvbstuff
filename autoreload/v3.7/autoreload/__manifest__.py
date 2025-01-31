@@ -7,6 +7,5 @@
     "data": [
         "templates/index.xml",
         "templates/kiwi.xml",
-        #"templates/admin.xml",
     ],
 }
