@@ -127,7 +127,7 @@
                                 <h1 style="color: red; font-weight: bolder;">Autoreload V3.7</h1>
                                 <p style="color: red; font-size: 1.17em; font-weight: bolder;" id="status">...</p>
                                 <p style="color: grey;">
-                                    <!-- Please don't remove this branding unless you are properly giving credit somewhere else -->
+                                    <!-- Please don't remove or hide this branding unless you are properly giving credit somewhere else -->
                                     Written by @TheSWLChannel<br/>
                                     Autoreload V3.7 is still rather experimental :3c
                                 </p>
