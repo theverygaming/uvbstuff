@@ -97,8 +97,8 @@ class Kiwi(sillyorm.model.Model):
     def choose_best(self):
         records = self.env["kiwi"].search([("active", "=", True), "|", ("fallback", "=", True)])
         t_utc = datetime.datetime.now(datetime.UTC).replace(tzinfo=None)
-        # TODO: log information on score calculation 
         def rate_kiwis(kiwis, is_fallback=False):
+            # in case of fallback all hour constraints will be ignored
             if not is_fallback:
                 kiwis = list(filter(lambda x: t_utc.hour >= x[0].hour_start and t_utc.hour <= x[0].hour_end, kiwis))
             for i, (kiwi, _) in enumerate(kiwis):
@@ -109,17 +109,31 @@ class Kiwi(sillyorm.model.Model):
                     + last_used * 1  # time score multiplier (time is minutes passed since kiwi was last used)
                 )
                 if is_fallback:
+                    # in case of fallback all hour constraints will be ignored,
+                    # it would be nice if a fallback with fitting hours would be chosen.
                     pass  # TODO: rate the time
+                _logger.info(
+                    "Rated kiwi with URL '%s' and ID %d - SNR: %f usage: %f%% minutes since used: %f -- score: %d",
+                    kiwi.url,
+                    kiwi.id,
+                    kiwi.state_snr,
+                    kiwi.state_usage,
+                    last_used,
+                    score,
+                )
                 kiwis[i][1] = score
             kiwis.sort(key=lambda x: x[1], reverse=True)
             return kiwis
 
         records.get_status()
         records = [k for k in records if k.state_alive and (k.timelimit == 0 or (k.timelimit - k.get_used_24h_mins()) > 5)]
+        _logger.info("Rating kiwis")
         kiwis = rate_kiwis([[k, 0] for k in records if k.active])
         if len(kiwis) == 0:
+            _logger.info("No usable kiwis found! Checking if there is any usable fallback ones...")
             kiwis = rate_kiwis([[k, 0] for k in records if k.fallback], True)
             if len(kiwis) == 0:
+                _logger.info("No fallback kiwi found either :(")
                 return None
 
         return kiwis[0][0]
