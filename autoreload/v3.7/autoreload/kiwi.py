@@ -25,8 +25,6 @@ class Kiwi(sillyorm.model.Model):
     state_usage = sillyorm.fields.Float()  # how many free slots the kiwi has (value from 0 to 100%)
     state_snr = sillyorm.fields.Float()  # HF only SNR
 
-    times_used = sillyorm.fields.One2many("kiwi_timeslot", "kiwi")
-
     def get_status(self):
         for record in self:
             print(f"getting kiwi status for '{record.url}'")
@@ -36,7 +34,7 @@ class Kiwi(sillyorm.model.Model):
                 # TODO: try and use multiple threads for this, as this takes forever with a large list to go through
                 resp = requests.get(f"{record.url}/status", timeout=2)
                 resp.raise_for_status()
-                match = re.findall(r"(.*)=(.*)", resp.text)
+                match = re.findall(r"(.+)=(.+)", resp.text)
                 if match is None:
                     print("  -> kiwi status in invalid format")
                     continue
@@ -44,6 +42,7 @@ class Kiwi(sillyorm.model.Model):
                 for (k, v) in match:
                     vals[k] = v
                 record.state_alive = vals["status"] == "active" and vals["offline"] == "no"
+                # Avoid divide by zero when users_max is zero, which can be the case
                 if int(vals["users_max"]) != 0:
                     record.state_usage = (int(vals["users"]) / int(vals["users_max"])) * 100
                 else:
@@ -60,14 +59,36 @@ class Kiwi(sillyorm.model.Model):
 
     def get_last_used(self):
         self.ensure_one()
-        times = [t.end if t.end is not None else t.start for t in self.times_used if t.start is not None or t.end is not None]
-        times.sort(reverse=True)
+        times = self.env["kiwi_timeslot"].search(
+            [
+                ("kiwi", "=", self.id),
+                "&",
+                ("start", "!=", None),
+                "&",
+                ("end", "!=", None),
+            ],
+            order_by="end",
+            order_asc=False,
+        )
         return times[0] if len(times) != 0 else None
-    
+
     def get_used_24h_mins(self):
         self.ensure_one()
         t_utc = datetime.datetime.now(datetime.UTC).replace(tzinfo=None) - datetime.timedelta(hours=24)
-        times = [(t.end - t.start).total_seconds() / 60 for t in self.times_used if t.start is not None and t.end is not None and t.start >= t_utc]
+        times = self.env["kiwi_timeslot"].search(
+            [
+                ("kiwi", "=", self.id),
+                "&",
+                ("start", ">=", t_utc),
+                "&",
+                ("start", "!=", None),
+                "&",
+                ("end", "!=", None),
+            ],
+            order_by="end",
+            order_asc=False,
+        )
+        times = [(t.end - t.start).total_seconds() / 60 for t in times]
         return sum(times)
 
     def choose_best(self):
