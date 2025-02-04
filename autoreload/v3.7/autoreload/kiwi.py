@@ -6,6 +6,8 @@ import sillyorm
 
 _logger = logging.getLogger(__name__)
 
+# TODO: allow deleting kiwis
+# TODO: let the user force a reload from the admin UI
 
 def _is_in_hour_range(start, end, hour):
     # In case of a midnight transistion in the start-end range
