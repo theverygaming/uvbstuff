@@ -2,23 +2,16 @@ with import (fetchTarball https://github.com/NixOS/nixpkgs/archive/5ad6a14c6bf09
 let
   sillyORMPackage = pkgs.python312Packages.buildPythonPackage rec {
     pname = "sillyorm";
-    version = "0.8.1";
+    version = "0.9.0";
     pyproject = true;
 
     build-system = [
       python312Packages.setuptools
     ];
 
-    /*
     src = fetchPypi {
       inherit pname version;
-      hash = "sha256-J/k/P178iNjoGApD0kj08uymqlftFXsqGfUoUIHhcIc=";
-    };
-    */
-    src = fetchgit {
-      url = "https://github.com/theverygaming/sillyORM.git";
-      rev = "cfddd5c848f287faee8f0c9d7971034202588d25";
-      hash = "sha256-o9mNc7RQtUkMyCM6HmdnmtXhzV+T7MhCMmGEOODcqiE=";
+      hash = "sha256-NRX+4IT+Wif3X5qlnShN+FT/kN4+gq7earT44mgxCVI=";
     };
   };
   sillyPackage = pkgs.python312Packages.buildPythonPackage rec {
@@ -38,8 +31,8 @@ let
 
     src = fetchgit {
       url = "https://github.com/theverygaming/silly.git";
-      rev = "8fb07dee5afe563817d263d40fdc0b1058635c94";
-      hash = "sha256-oh2wDka06JvzCITC7j+xDcJncOOvysI71daHQGN5uIU=";
+      rev = "050482f272af4fab564c15238bd7b17ecf22197d";
+      hash = "sha256-If8H++PzRlrb/uV3fRanVWBGaJsMi2sgYnSBTZ4sF9U=";
     };
   };
 in
