@@ -7,6 +7,14 @@ import sillyorm
 _logger = logging.getLogger(__name__)
 
 
+def _is_in_hour_range(start, end, hour):
+    # In case of a midnight transistion in the start-end range
+    if start > end:
+        return hour >= start or hour <= end
+    # normal case
+    return hour >= start and hour <= end
+
+
 class Kiwi(sillyorm.model.Model):
     _name = "kiwi"
 
@@ -16,7 +24,6 @@ class Kiwi(sillyorm.model.Model):
     url = sillyorm.fields.String()
     timeout = sillyorm.fields.Integer()  # timeout in minutes (max time spent until you get kicked)
     timelimit = sillyorm.fields.Integer()  # timelimit in minutes (max time spent on the kiwi in 24h)
-    # FIXME: support midnight transitions with hour_start and hour_end
     hour_start = sillyorm.fields.Integer()  # starting UTC hour this kiwi can be used from (inclusive)
     hour_end = sillyorm.fields.Integer()  # ending UTC hour this kiwi can be used until (inclusive)
     notes = sillyorm.fields.Text()
@@ -100,7 +107,7 @@ class Kiwi(sillyorm.model.Model):
         def rate_kiwis(kiwis, is_fallback=False):
             # in case of fallback all hour constraints will be ignored
             if not is_fallback:
-                kiwis = list(filter(lambda x: t_utc.hour >= x[0].hour_start and t_utc.hour <= x[0].hour_end, kiwis))
+                kiwis = list(filter(lambda x: _is_in_hour_range(x[0].hour_start, x[0].hour_end, t_utc.hour), kiwis))
             for i, (kiwi, _) in enumerate(kiwis):
                 last_used = (t_utc - k_last_used).total_seconds() / 60 if (k_last_used := kiwi.get_last_used()) is not None else 0
                 score = (
