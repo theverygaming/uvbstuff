@@ -1,4 +1,4 @@
-from . import routes, kiwi
+from . import routes, kiwi, menu, views
 
 def module_onload(env):
     env.register_model(kiwi.Kiwi)

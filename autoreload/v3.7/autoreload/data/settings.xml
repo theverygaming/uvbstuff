@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <record model="settings_setting" xmlid="autoreload.setting_kiwi_freq" noupdate="1">
+        <field name="key" t="str">autoreload.kiwi_freq</field>
+        <field name="value" t="str">4625</field>
+    </record>
+
+    <record model="settings_setting" xmlid="autoreload.setting_kiwi_mode" noupdate="1">
+        <field name="key" t="str">autoreload.kiwi_mode</field>
+        <field name="value" t="str">usb</field>
+    </record>
+
+    <record model="settings_setting" xmlid="autoreload.setting_kiwi_zoom" noupdate="1">
+        <field name="key" t="str">autoreload.kiwi_zoom</field>
+        <field name="value" t="str">11</field>
+    </record>
+
+    <record model="settings_setting" xmlid="autoreload.setting_kiwi_band_start" noupdate="1">
+        <field name="key" t="str">autoreload.kiwi_band_start</field>
+        <field name="value" t="str">50</field>
+    </record>
+
+    <record model="settings_setting" xmlid="autoreload.setting_kiwi_band_end" noupdate="1">
+        <field name="key" t="str">autoreload.kiwi_band_end</field>
+        <field name="value" t="str">4000</field>
+    </record>
+
+    <record model="settings_setting" xmlid="autoreload.setting_kiwi_colormap" noupdate="1">
+        <field name="key" t="str">autoreload.kiwi_colormap</field>
+        <field name="value" t="str">1</field>
+    </record>
+
+    <record model="settings_setting" xmlid="autoreload.setting_kiwi_volume" noupdate="1">
+        <field name="key" t="str">autoreload.kiwi_volume</field>
+        <field name="value" t="str">180</field>
+    </record>
+</root>

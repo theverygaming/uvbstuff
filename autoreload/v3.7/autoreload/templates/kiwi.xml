@@ -1,135 +1,141 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
-    <template name="kiwi_index" t-strip-text=" &#10;">
-        <t t-call="autoreload_html_base">
-            <t t-set="title">Autoreload V3.7 - KiwiSDR</t>
-            <t t-set="head2">
-                <style>
-                    body {
-                        background-color: black;
-                    }
-
-                    #overlay {
-                        display: none;
-                        position: fixed;
-                        z-index: 2;
-                        background: black;
-                        width: 100%;
-                        height: 100%;
-                        top: 0;
-                        left: 0;
-                        bottom: 0;
-                        right: 0;
-                    }
-
-                    #kiwiframe {
-                        position: fixed;
-                        top: 0;
-                        left: 0;
-                        bottom: 0;
-                        right: 0;
-                        width: 100%;
-                        height: 100%;
-                        border: none;
-                        margin: 0;
-                        padding: 0;
-                        overflow: hidden;
-                        z-index: 1;
-                    }
-
-                    .centertext {
-                        text-align: center;
-                        position: fixed;
-                        top: 50%;
-                        bottom: 50%;
-                        width: 100%;
-                    }
-                </style>
-            </t>
-            <t t-set="body">
-                <div>
-                    <script>
-                        let last_iframe_src = null;
-                        function frameLoad(url) {
-                            console.log(`loading ${url}`);
-                            if (url == null) {
-                                if (last_iframe_src == "") {
-                                    return;
-                                }
-                                last_iframe_src = "";
-                                document.getElementById("kiwiframe").src = last_iframe_src;
-                                return;
+    <record model="template" xmlid="autoreload.template_kiwi_index">
+        <field name="xml" t="str">
+            <template t-strip-text=" &#10;">
+                <t t-call="html_base.base">
+                    <t t-set="title">Autoreload V3.7 - KiwiSDR</t>
+                    <t t-set="lang">en</t>
+                    <t t-set="head">
+                        <style>
+                            body {
+                                background-color: black;
                             }
 
-                            console.log("adding overlay");
-                            document.getElementById("overlay").style.display = "block";
-                            last_iframe_src = url;
-                            document.getElementById("kiwiframe").src = last_iframe_src;
-                            setTimeout(() =&gt; { document.getElementById("overlay").style.display = "none"; console.log("removing overlay"); }, 15 * 1000);
-                        }
+                            #overlay {
+                                display: none;
+                                position: fixed;
+                                z-index: 2;
+                                background: black;
+                                width: 100%;
+                                height: 100%;
+                                top: 0;
+                                left: 0;
+                                bottom: 0;
+                                right: 0;
+                            }
 
-                        async function reload() {
-                            document.getElementById("status").style.color = "yellow";
-                            document.getElementById("status").textContent = "getting new instructions...";
-                            try {
-                                const controller = new AbortController();
-                                setTimeout(() =&gt; controller.abort(), 30000);
-                                const response = await fetch("/kiwi/instruction", {
-                                    method: "post",
-                                    headers: {
-                                        "Content-Type": "application/json"
-                                    },
-                                    body: JSON.stringify({"iframeContent": last_iframe_src}),
-                                    signal: controller.signal
+                            #kiwiframe {
+                                position: fixed;
+                                top: 0;
+                                left: 0;
+                                bottom: 0;
+                                right: 0;
+                                width: 100%;
+                                height: 100%;
+                                border: none;
+                                margin: 0;
+                                padding: 0;
+                                overflow: hidden;
+                                z-index: 1;
+                            }
+
+                            .centertext {
+                                text-align: center;
+                                position: fixed;
+                                top: 50%;
+                                bottom: 50%;
+                                width: 100%;
+                            }
+                        </style>
+                    </t>
+                    <t t-set="body">
+                        <div>
+                            <script>
+                                let last_iframe_src = null;
+                                function frameLoad(url) {
+                                    console.log(`loading ${url}`);
+                                    if (url == null) {
+                                        if (last_iframe_src == "") {
+                                            return;
+                                        }
+                                        last_iframe_src = "";
+                                        document.getElementById("kiwiframe").src = last_iframe_src;
+                                        return;
+                                    }
+
+                                    console.log("adding overlay");
+                                    document.getElementById("overlay").style.display = "block";
+                                    last_iframe_src = url;
+                                    document.getElementById("kiwiframe").src = last_iframe_src;
+                                    setTimeout(() =&gt; { document.getElementById("overlay").style.display = "none"; console.log("removing overlay"); }, 15 * 1000);
+                                }
+
+                                async function reload() {
+                                    document.getElementById("status").style.color = "yellow";
+                                    document.getElementById("status").textContent = "getting new instructions...";
+                                    try {
+                                        const controller = new AbortController();
+                                        setTimeout(() =&gt; controller.abort(), 30000);
+                                        const response = await fetch("/kiwi/instruction", {
+                                            method: "post",
+                                            headers: {
+                                                "Content-Type": "application/json"
+                                            },
+                                            body: JSON.stringify({"iframeContent": last_iframe_src}),
+                                            signal: controller.signal
+                                        });
+                                        console.log(response);
+                                        if (!response.ok) {
+                                            throw new Error("bad response");
+                                        }
+                                        const instruction = await response.json();
+                                        console.log(instruction);
+                                        document.getElementById("status").style.color = "green";
+                                        document.getElementById("status").textContent = "got instructions...";
+                                        if (instruction.load !== undefined) {
+                                            frameLoad(instruction.load);
+                                        }
+                                        if (instruction.message !== undefined) {
+                                            document.getElementById("status").style.color = instruction.message.color;
+                                            document.getElementById("status").textContent = instruction.message.text;
+                                        }
+                                    } catch (e) {
+                                        console.log(`Error: ${e.message}`);
+                                        document.getElementById("status").style.color = "red";
+                                        document.getElementById("status").textContent = `Error!`;
+                                        frameLoad(null);
+                                    }
+                                    setTimeout(reload, 20000);
+                                }
+
+                                window.addEventListener("load", () =&gt; {
+                                    frameLoad(null);
+                                    reload();
                                 });
-                                console.log(response);
-                                if (!response.ok) {
-                                    throw new Error("bad response");
-                                }
-                                const instruction = await response.json();
-                                console.log(instruction);
-                                document.getElementById("status").style.color = "green";
-                                document.getElementById("status").textContent = "got instructions...";
-                                if (instruction.load !== undefined) {
-                                    frameLoad(instruction.load);
-                                }
-                                if (instruction.message !== undefined) {
-                                    document.getElementById("status").style.color = instruction.message.color;
-                                    document.getElementById("status").textContent = instruction.message.text;
-                                }
-                            } catch (e) {
-                                console.log(`Error: ${e.message}`);
-                                document.getElementById("status").style.color = "red";
-                                document.getElementById("status").textContent = `Error!`;
-                                frameLoad(null);
-                            }
-                            setTimeout(reload, 20000);
-                        }
+                            </script>
+                            <iframe src="" id="kiwiframe">
+                                Your browser doesn't support iframes
+                            </iframe>
+                            <div id="overlay">
+                                <h1 class="centertext" style="color: green;">
+                                    Loading receiver...
+                                </h1>
+                            </div>
 
-                        window.addEventListener("load", () =&gt; {
-                            frameLoad(null);
-                            reload();
-                        });
-                    </script>
-                    <iframe src="" id="kiwiframe">
-                        Your browser doesn't support iframes
-                    </iframe>
-                    <div id="overlay">
-                        <h1 class="centertext" style="color: green;">
-                            Loading receiver...
-                        </h1>
-                    </div>
-
-                    <div class="centertext">
-                        <h1 style="color: red; font-weight: bolder;">Autoreload V3.7</h1>
-                        <p style="color: red; font-size: 1.17em; font-weight: bolder;" id="status">...</p>
-                        <p style="color: grey;">
-                            Written by @TheSWLChannel<br/>
-                            Autoreload V3.7 is still rather experimental :3c
-                        </p>
-                    </div>
-                </div>
-            </t>
-        </t>
-    </template>
+                            <div class="centertext">
+                                <h1 style="color: red; font-weight: bolder;">Autoreload V3.7</h1>
+                                <p style="color: red; font-size: 1.17em; font-weight: bolder;" id="status">...</p>
+                                <p style="color: grey;">
+                                    <!-- Please don't remove or hide this branding unless you are properly giving credit somewhere else -->
+                                    Written by @TheSWLChannel<br/>
+                                    Autoreload V3.7 is still rather experimental :3c
+                                </p>
+                            </div>
+                        </div>
+                    </t>
+                </t>
+            </template>
+        </field>
+    </record>
 </root>
