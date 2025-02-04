@@ -56,7 +56,7 @@ class Kiwi(sillyorm.model.Model):
                 if int(vals["users_max"]) != 0:
                     record.state_usage = (int(vals["users"]) / int(vals["users_max"])) * 100
                 else:
-                    record.state_usage = 100
+                    record.state_usage = 100.0
                 record.state_snr = float(int(vals["snr"].split(",")[1]))  # HF only SNR
 
             except (requests.exceptions.RequestException, KeyError, ValueError) as e:
