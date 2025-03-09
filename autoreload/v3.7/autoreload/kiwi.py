@@ -134,6 +134,7 @@ class Kiwi(sillyorm.model.Model):
             kiwis.sort(key=lambda x: x[1], reverse=True)
             return kiwis
 
+        # FIXME: take a closer look at this stuff
         records.get_status()
         records = [k for k in records if k.state_alive and (k.timelimit == 0 or (k.timelimit - k.get_used_24h_mins()) > 5)]
         _logger.info("Rating kiwis")
