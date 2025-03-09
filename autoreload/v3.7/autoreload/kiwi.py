@@ -104,6 +104,7 @@ class Kiwi(sillyorm.model.Model):
         return sum(times)
 
     def choose_best(self):
+        # FIXME: this seems to choose a kiwi even if all kiwis are are 100% usage
         records = self.env["kiwi"].search([("active", "=", True), "|", ("fallback", "=", True)])
         t_utc = datetime.datetime.now(datetime.UTC).replace(tzinfo=None)
         def rate_kiwis(kiwis, is_fallback=False):
