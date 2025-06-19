@@ -19,6 +19,6 @@ pip install -r requirements.txt --upgrade-strategy only-if-needed || { echo "Err
 echo "Starting silly"
 # Loop 
 while true; do
-  python main.py >> autoreload.log 2>&1
+  python main.py 2>&1 | tee -a autoreload.log
 done
 
