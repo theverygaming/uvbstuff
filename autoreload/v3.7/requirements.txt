@@ -1,0 +1,2 @@
+requests>=2,<3
+silly @ git+https://github.com/theverygaming/silly.git@050482f272af4fab564c15238bd7b17ecf22197d
