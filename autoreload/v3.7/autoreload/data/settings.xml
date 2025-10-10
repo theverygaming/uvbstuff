@@ -1,5 +1,5 @@
-<!-- SPDX-License-Identifier: AGPL-3.0-only -->
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- SPDX-License-Identifier: AGPL-3.0-only -->
 <root>
     <record model="settings_setting" xmlid="autoreload.setting_kiwi_freq" noupdate="1">
         <field name="key" t="str">autoreload.kiwi_freq</field>
