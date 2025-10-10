@@ -1,4 +1,5 @@
 @echo off
+REM SPDX-License-Identifier: AGPL-3.0-only
 
 if not exist autoreload_venv (
   echo Venv not found! Creating venv...

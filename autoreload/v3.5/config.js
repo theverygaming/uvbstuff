@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // If you use this please specify multiple kiwis so you don't just camp on a single one!
 // URL format: http://kiwi.com:8073/ - timeout - 24h usage limit (time limits in minutes, null means no limit)
 const kiwilistDay = [

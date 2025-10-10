@@ -1,3 +1,4 @@
+<!-- SPDX-License-Identifier: AGPL-3.0-only -->
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
     <record model="template" xmlid="autoreload.template_kiwi_index">

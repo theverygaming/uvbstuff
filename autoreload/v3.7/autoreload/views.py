@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 from silly.modules.webclient_nojs.view import views
 
 views.update({

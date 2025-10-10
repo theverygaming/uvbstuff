@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // https://dmitripavlutin.com/timeout-fetch-request/
 async function getRequestAsync(url, timeout) {
     const controller = new AbortController();
