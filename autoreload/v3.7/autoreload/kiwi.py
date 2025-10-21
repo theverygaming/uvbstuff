@@ -54,7 +54,7 @@ class Kiwi(sillyorm.model.Model):
                 vals = {}
                 for (k, v) in match:
                     vals[k] = v
-                record.state_alive = vals["status"] == "active" and vals["offline"] == "no"
+                record.state_alive = vals["status"] in ["active", "private"] and vals["offline"] == "no"
                 # Avoid divide by zero when users_max is zero, which can be the case
                 if int(vals["users_max"]) != 0:
                     record.state_usage = (int(vals["users"]) / int(vals["users_max"])) * 100
